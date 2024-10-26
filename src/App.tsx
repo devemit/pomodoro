@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { Button } from 'antd';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+    const POMODORO_TIME = 25 * 60;
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    const [timeLeft, setTimeLeft] = useState(POMODORO_TIME);
+    const [isRunning, setIsRunning] = useState(false);
 
-export default App
+    const percentFull = (timeLeft / POMODORO_TIME) * 100;
+
+    useEffect(() => {
+        let timer: any;
+        if (isRunning && timeLeft > 0) {
+            timer = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+            }, 1000);
+        } else if (timeLeft === 0) {
+            setIsRunning(false);
+            alert("Time's up! Take a break ☕");
+        }
+        return () => clearInterval(timer);
+    }, [isRunning, timeLeft]);
+
+    const startTimer = () => setIsRunning(true);
+    const stopTimer = () => setIsRunning(false);
+    const resetTimer = () => {
+        setIsRunning(false);
+        setTimeLeft(POMODORO_TIME);
+    };
+
+    return (
+        <div className='App'>
+            <span className='tl'>{timeLeft}</span>
+            <div className='battery'>
+                <div className='battery-fill' style={{ height: `${percentFull}%` }}></div>
+                <div className='battery-terminal'></div>
+            </div>
+            <div className='controls'>
+                <Button size='small' type='primary' onClick={startTimer}>
+                    Start
+                </Button>
+                <Button size='small' type='primary' onClick={stopTimer}>
+                    Pause
+                </Button>
+                <Button size='small' type='primary' onClick={resetTimer}>
+                    Reset
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+export default App;
