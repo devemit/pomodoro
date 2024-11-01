@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { Battery } from './battery/battery';
 import { useEffect, useState } from 'react';
+import '../App.css';
 
 export const Widget = () => {
     const POMODORO_TIME = 25 * 60;
